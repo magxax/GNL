@@ -1,99 +1,84 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   getnextline.c                                      :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tbenoist <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/28 12:09:23 by tbenoist          #+#    #+#             */
-/*   Updated: 2016/01/08 14:39:41 by tbenoist         ###   ########.fr       */
+/*   Created: 2016/03/18 12:23:36 by tbenoist          #+#    #+#             */
+/*   Updated: 2016/03/18 16:17:27 by tbenoist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include "libft.h"
-#include <stdio.h>
 
-t_pos	*create_pos(int fd)
+void	*ft_realloc(void *ptr, size_t size)
 {
-	t_pos	*new;
+	void *new;
 
-	if((new = (t_pos*)malloc(sizeof(t_pos))))
+	if (!ptr)
+		return (malloc(size));
+	new = (size) ? ft_memalloc(sizeof(char)*size) : malloc(0);
+	if (!new)
+		return (NULL);
+	if(ptr)
 	{
-		new->fd = fd;
-		new->next = NULL;
+		new = ft_memcpy(new, ptr, size);
+		free(ptr);
 	}
 	return (new);
 }
 
-int		line_in_list(int const fd, char **line, char *buf, t_pos *tmp)
+
+
+int		get_line(char* str, char** line, size_t size, char** save)
 {
-	if (tmp->fd == fd)
-	{
-		if (!ft_strchr(tmp->last_line, '\n'))
+	char	*tmp;
+
+	tmp = *save;
+	if (ft_strchr(str, '\n'))
 		{
-			*line = ft_strdup(tmp->last_line);
-			if (!(*line))
+			if (!(*line = ft_realloc(*line, ft_strlen(*line) + size)))
 				return (-1);
+			*line = ft_strncat(*line , str, ft_strchr(str, '\n') - str);
+			if(!(*save = ft_strdup(ft_strchr(str, '\n') + 1)))
+				return (-1);
+			free (tmp);
+			return (1);
 		}
 		else
 		{
-			ft_strcpy(buf, tmp->last_line);
-			tmp->last_line = ft_strchr(tmp->last_line, '\n') + 1;
-			*ft_strchr(buf, '\n') = '\0';
-			*line = ft_strjoin(*line, buf);
-			return (1);
+			if (!((*line = ft_realloc(*line, ft_strlen(*line) + size))))
+				return (-1);
+			*line = ft_strncat(*line, str, size);
 		}
-	}
-	else
-	tmp->next = create_pos(fd);
-	return(0);
+		return (0);
 }
 
-int get_next_line(int const fd, char **line)
+int			get_next_line(int const fd, char **line)
 {
 	char			*buf;
 	int				ret;
-	static t_pos	*list = NULL;
-	t_pos			*tmp;
+	int				res;
+	static char*	save = NULL;
 
-	tmp = list;
-	buf = ft_strnew(BUFF_SIZE);
+	ret = 1;
 	*line = ft_strnew(0);
-	if (!(*line) || !(buf))
-		return (-1);
-	printf("fdrec = %d\n", fd);
-	if (list)
+	if (save)
 	{
-		while (tmp->next && tmp->fd != fd)
+		if((res = get_line(save, line, ft_strlen(save), &save)))
 		{
-			tmp = tmp->next;
-			printf("fd= %d\ncontent = %s\n", tmp->fd, tmp->last_line);
+				return (res);
 		}
-		ret = line_in_list(fd, line, buf, tmp);
-		if (ret)
-			return (ret);
 	}
-	else
+	buf = ft_strnew(BUFF_SIZE);
+	while(ret)
 	{
-		list = create_pos(fd);
-		tmp = list;
-	}
-	while(((ret = read(fd, buf, BUFF_SIZE)) > 0 && !(ft_strchr(buf, '\n'))))
-	{
-		*line = ft_strjoin(*line, buf);
-		if (!(*line))
+		ret = read(fd, buf, BUFF_SIZE);
+		if (ret < 0)
 			return (-1);
+		if((res = get_line(buf, line, ret, &save)))
+			return (res);
 	}
-	if (ret < 0)
-		return (-1);
-	if (ft_strchr(buf, '\n'))
-	{
-		tmp->last_line = ft_strdup(ft_strchr(buf, '\n') + 1);
-		*ft_strchr(buf, '\n') = '\0';
-	}
-	else
-		tmp->last_line = "";
-	*line = ft_strjoin(*line, buf);
-	return ret ? 1 : 0;
+	return (0);
 }

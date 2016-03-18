@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tbenoist <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/12/30 15:04:38 by tbenoist          #+#    #+#             */
-/*   Updated: 2016/01/08 13:03:02 by tbenoist         ###   ########.fr       */
+/*   Created: 2016/02/25 11:07:22 by tbenoist          #+#    #+#             */
+/*   Updated: 2016/03/18 16:17:37 by tbenoist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,11 @@
 # include <sys/types.h>
 # include <sys/uio.h>
 # include <unistd.h>
-# define BUFF_SIZE 100000
+# include <stdlib.h>
+# include "libft/includes/libft.h"
+# define BUFF_SIZE 100
 
+int			get_next_line(int const fd, char ** line);
 
-typedef		struct	s_pos
-{
-	int				fd;
-	char			*last_line;
-	struct	s_pos	*next;
-}					t_pos;
-
-
-int get_next_line(int const fd, char ** line);
 
 #endif
