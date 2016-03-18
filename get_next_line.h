@@ -6,7 +6,7 @@
 /*   By: tbenoist <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/25 11:07:22 by tbenoist          #+#    #+#             */
-/*   Updated: 2016/03/18 16:17:37 by tbenoist         ###   ########.fr       */
+/*   Updated: 2016/03/18 17:17:13 by tbenoist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 # include "libft/includes/libft.h"
 # define BUFF_SIZE 100
 
-int			get_next_line(int const fd, char ** line);
-
+int			get_next_line(int const fd, char **line);
 
 #endif
