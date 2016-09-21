@@ -22,7 +22,7 @@ int	main()
 
 	fd = open ("test", O_RDONLY);
 	line = (char*)malloc(1);
-	while (res)
+	while (res > 0)
 		printf("res= %d\n%s\n", res = get_next_line(fd, &line), line);
 	return (0);
 }

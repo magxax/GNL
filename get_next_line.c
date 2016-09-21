@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include "libft/includes/libft.h"
 
 void		*ft_realloc(void *ptr, size_t size)
 {
